@@ -1,0 +1,8 @@
+build
+out
+.idea
+!.idea/dictionaries/
+.gradle
+local.properties
+github.properties
+*.iml

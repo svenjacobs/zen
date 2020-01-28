@@ -1,0 +1,26 @@
+package com.svenjacobs.zen.common.coroutines.flow
+
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
+fun <T> Flow<T>.delayedDefault(
+    defaultAfter: Long,
+    defaultValue: () -> T
+): Flow<T> =
+    channelFlow {
+        val job = launch {
+            delay(defaultAfter)
+            send(defaultValue())
+        }
+
+        collect {
+            job.cancel()
+            send(it)
+        }
+
+        // Cancel (again) in case of empty Flow
+        job.cancel()
+    }
