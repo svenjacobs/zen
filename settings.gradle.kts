@@ -1,4 +1,9 @@
-include("lib")
-
 rootProject.name = "zen"
-project(":lib").name = "zen-core"
+
+include("common",
+        "core",
+        "android")
+
+project(":common").name = "zen-common"
+project(":core").name = "zen-core"
+project(":android").name = "zen-android"

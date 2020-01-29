@@ -14,7 +14,9 @@ buildscript {
     }
 }
 
-allprojects {
+subprojects {
+    apply(plugin = "maven")
+
     repositories {
         google()
         jcenter()
