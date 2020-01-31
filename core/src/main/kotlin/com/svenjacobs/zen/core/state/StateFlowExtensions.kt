@@ -36,7 +36,7 @@ suspend fun <S : State, T> Flow<S>.nullableSideEffect(
  * Holds selected value of [sideEffect] or [nullableSideEffect] and provides current [State] as
  * an additional property.
  *
- * [state] is not part of primary constructor so that the value is omitted from automatically
+ * [_state] is not part of primary constructor so that the value is omitted from automatically
  * generated [equals] and [hashCode] functions in order for [Flow.distinctUntilChanged] to still
  * work properly.
  *
@@ -46,20 +46,21 @@ suspend fun <S : State, T> Flow<S>.nullableSideEffect(
 data class SelectionWithState<T, S : State>(
     val value: T
 ) {
-    lateinit var state: S
+    private lateinit var _state: S
+    val state: S get() = _state
 
     internal companion object {
 
         internal fun <T, S : State> of(value: T?, state: S) =
             value?.let {
                 SelectionWithState<T, S>(value).apply {
-                    this.state = state
+                    _state = state
                 }
             }
 
         internal fun <T, S : State> ofNullable(value: T?, state: S) =
             SelectionWithState<T?, S>(value).apply {
-                this.state = state
+                _state = state
             }
     }
 }
