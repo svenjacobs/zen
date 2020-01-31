@@ -10,62 +10,63 @@ import org.amshove.kluent.`should be equal to`
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object FlowExtensionsTest : Spek({
+object FlowExtensionsTest : Spek(
+    {
+        describe("Flow extensions") {
 
-    describe("Flow extensions") {
+            context("delayedDefault") {
 
-        context("delayedDefault") {
+                it("should produce default value after timeout") {
+                    val flow = flow {
+                        delay(500)
+                        emit("Hello world")
+                    }
 
-            it("should produce default value after timeout") {
-                val flow = flow {
-                    delay(500)
-                    emit("Hello world")
+                    runBlockingTest {
+                        val results = flow
+                            .delayedDefault(200) { "Default" }
+                            .toList()
+
+                        advanceTimeBy(500)
+
+                        results `should be equal to` listOf(
+                            "Default",
+                            "Hello world"
+                        )
+                    }
                 }
 
-                runBlockingTest {
-                    val results = flow
-                        .delayedDefault(200) { "Default" }
-                        .toList()
+                it("should *not* produce default value if timeout was not reached") {
+                    val flow = flow {
+                        delay(200)
+                        emit("Hello world")
+                    }
 
-                    advanceTimeBy(500)
+                    runBlockingTest {
+                        val results = flow
+                            .delayedDefault(500) { "Default" }
+                            .toList()
 
-                    results `should be equal to` listOf(
-                        "Default",
-                        "Hello world"
-                    )
+                        advanceTimeBy(500)
+
+                        results `should be equal to` listOf(
+                            "Hello world"
+                        )
+                    }
                 }
-            }
 
-            it("should *not* produce default value if timeout was not reached") {
-                val flow = flow {
-                    delay(200)
-                    emit("Hello world")
-                }
+                it("should *not* produce default value for empty flow") {
+                    runBlockingTest {
+                        val results = emptyFlow<String>()
+                            .delayedDefault(200) { "Default" }
+                            .toList()
 
-                runBlockingTest {
-                    val results = flow
-                        .delayedDefault(500) { "Default" }
-                        .toList()
+                        advanceTimeBy(500)
 
-                    advanceTimeBy(500)
-
-                    results `should be equal to` listOf(
-                        "Hello world"
-                    )
-                }
-            }
-
-            it("should *not* produce default value for empty flow") {
-                runBlockingTest {
-                    val results = emptyFlow<String>()
-                        .delayedDefault(200) { "Default" }
-                        .toList()
-
-                    advanceTimeBy(500)
-
-                    results.`should be empty`()
+                        results.`should be empty`()
+                    }
                 }
             }
         }
     }
-})
+)

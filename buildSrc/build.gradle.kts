@@ -10,3 +10,8 @@ repositories {
     google()
     jcenter()
 }
+
+dependencies {
+    implementation(kotlin("gradle-plugin", version = "1.3.61"))
+    implementation("com.android.tools.build:gradle:3.5.3")
+}
