@@ -1,6 +1,7 @@
 package com.svenjacobs.zen.core.state
 
 import com.svenjacobs.zen.core.action.Action
+import com.svenjacobs.zen.core.state.Transformer.Transformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -8,12 +9,17 @@ import kotlinx.coroutines.flow.flowOn
 import kotlin.coroutines.CoroutineContext
 
 /**
- * Transforms [Flow] of [Action] into Flow of [State] that is delegated to [StateMutator].
+ * Transforms [Flow] of [Action] into Flow of [State].
  *
- * The transformers's duty is to transform incoming actions into a state, likely fetching, computing
- * and converting data through use cases and mappers.
+ * The transformer's duty is to transform incoming actions into a state, likely fetching, computing
+ * and converting data through use cases and mappers. Transformations are described via [Transformation].
  *
  * In terms of Flux/Redux this would be the Reducer.
+ *
+ * @param transformationContext A [CoroutineContext] where [Transformation.invoke] is executed in
+ *
+ * @see com.svenjacobs.zen.core.master.ZenMaster
+ * @see Transformation
  */
 class Transformer<in A : Action, out S : State>(
     private val state: StateAccessor<S>,

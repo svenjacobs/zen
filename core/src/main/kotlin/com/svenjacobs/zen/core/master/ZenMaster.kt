@@ -13,10 +13,12 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 /**
- * A ZenMaster receives a [Flow] of [Action], transforming them into state (changes) and finally
+ * A ZenMaster receives a [Flow] of [Action], transforming them into state (changes) (via [Transformer]) and finally
  * delegating each state to [Contract.stateChanges].
  *
  * The [Contract] declares the interaction between master and view.
+ *
+ * @see Transformer
  */
 interface ZenMaster {
 
@@ -45,6 +47,10 @@ interface ZenMaster {
     fun onViewReady()
 }
 
+/**
+ * @param viewCoroutineScopeProvider Should provide a [CoroutineScope] that is attached to the lifecycle of the view
+ * @param uiContext A [CoroutineContext] where UI operations should be performed in
+ */
 class ZenMasterImpl<in V : ZenView, in A : Action, in S : State>(
     private val view: V,
     private val viewCoroutineScopeProvider: () -> CoroutineScope,

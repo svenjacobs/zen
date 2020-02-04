@@ -5,6 +5,12 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.svenjacobs.zen.core.master.ZenMaster
 
+/**
+ * Base class for [Fragments][Fragment] that use a [ZenMaster].
+ *
+ * @see onViewCreated
+ * @see onBeforeZenMasterViewReady
+ */
 abstract class ZenFragment : Fragment() {
 
     protected abstract val zenMaster: ZenMaster
