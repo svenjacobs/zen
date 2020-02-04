@@ -3,14 +3,14 @@ package com.svenjacobs.zen.core.master
 import com.svenjacobs.zen.core.action.Action
 import com.svenjacobs.zen.core.master.ZenMaster.Contract
 import com.svenjacobs.zen.core.state.State
+import com.svenjacobs.zen.core.state.StateMutator
 import com.svenjacobs.zen.core.state.Transformer
 import com.svenjacobs.zen.core.view.ZenView
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.broadcastIn
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A ZenMaster receives a [Flow] of [Action], transforming them into state (changes) and finally
@@ -49,7 +49,9 @@ class ZenMasterImpl<in V : ZenView, in A : Action, in S : State>(
     private val view: V,
     private val viewCoroutineScopeProvider: () -> CoroutineScope,
     private val transformer: Transformer<A, S>,
-    private val contract: Contract<V, A, S>
+    private val contract: Contract<V, A, S>,
+    private val state: StateMutator<S>,
+    private val uiContext: CoroutineContext = Dispatchers.Main
 ) : ZenMaster {
 
     /**
@@ -61,8 +63,10 @@ class ZenMasterImpl<in V : ZenView, in A : Action, in S : State>(
     override fun onViewReady() {
         viewCoroutineScopeProvider().let { scope ->
             scope.launch { contract.onViewReady(view) }
-            val actions = contract.actions(view)
+            val actions = contract.actions(view).flowOn(uiContext)
             val state = transformer.transform(actions)
+                .onEach { state.value = it }
+                .flowOn(uiContext)
                 // broadcastIn() & asFlow() is used here to create a "shared" state flow
                 // that is unbundled from further downstream transformations so that collection is
                 // only performed once.

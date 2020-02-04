@@ -1,10 +1,10 @@
 package com.svenjacobs.zen.core.state
 
 import com.svenjacobs.zen.core.action.Action
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -16,9 +16,9 @@ import kotlin.coroutines.CoroutineContext
  * In terms of Flux/Redux this would be the Reducer.
  */
 class Transformer<in A : Action, out S : State>(
-    private val state: StateMutator<S>,
+    private val state: StateAccessor<S>,
     private val transformation: Transformation<A, S>,
-    private val context: CoroutineContext
+    private val transformationContext: CoroutineContext = Dispatchers.Default
 ) {
 
     interface Transformation<in A : Action, S : State> {
@@ -36,6 +36,5 @@ class Transformer<in A : Action, out S : State>(
 
     fun transform(actions: Flow<A>): Flow<S> =
         actions.flatMapMerge { transformation(it, state.value) }
-            .onEach { state.value = it }
-            .flowOn(context)
+            .flowOn(transformationContext)
 }
