@@ -9,11 +9,14 @@ buildscript {
     dependencies {
         classpath("de.mannodermaus.gradle.plugins:android-junit5:1.5.2.0")
         classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.61")
     }
 }
 
 subprojects {
-    apply(plugin = "maven")
+    if (name != "android-example") {
+        apply(plugin = "maven")
+    }
 
     repositories {
         google()

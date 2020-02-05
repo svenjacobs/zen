@@ -4,7 +4,8 @@ include(
     "common",
     "core",
     "android",
-    "di-support-katana"
+    "di-support-katana",
+    "android-example"
 )
 
 project(":common").name = "zen-common"
