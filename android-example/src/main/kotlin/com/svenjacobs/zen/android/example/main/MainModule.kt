@@ -10,6 +10,7 @@ import com.svenjacobs.zen.android.example.main.state.MainState
 import com.svenjacobs.zen.android.example.main.state.MainTransformation
 import com.svenjacobs.zen.android.example.main.state.MainViewModel
 import com.svenjacobs.zen.android.example.main.view.MainFragment
+import com.svenjacobs.zen.android.example.main.view.MainView
 import com.svenjacobs.zen.di.support.katana.ZenModule
 import org.rewedigital.katana.Module
 import org.rewedigital.katana.androidx.viewmodel.viewModel
@@ -23,7 +24,7 @@ fun MainModule(
         ZenFragmentCoroutineScopeModule(fragment),
         ZenFragmentViewModelStateModule<MainState, MainViewModel>(fragment),
         ZenModule(
-            view = { fragment },
+            view = { fragment as MainView },
             transformation = {
                 MainTransformation(
                     get(),
