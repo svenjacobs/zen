@@ -3,6 +3,7 @@
 package com.svenjacobs.zen.di.support.katana
 
 import com.svenjacobs.zen.core.action.Action
+import com.svenjacobs.zen.core.master.NopMiddleware
 import com.svenjacobs.zen.core.master.ZenMaster
 import com.svenjacobs.zen.core.state.State
 import com.svenjacobs.zen.core.state.StateAccessor
@@ -31,7 +32,8 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
     noinline stateMutator: ProviderDsl.() -> StateMutator<S> = { get(name = ZEN_STATE_MUTATOR) },
     crossinline viewLifecycleCoroutineScopeProvider: ProviderDsl.() -> () -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE) },
     noinline transformationCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_TRANSFORMATION) },
-    crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) }
+    crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
+    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
 ) = Module {
 
     factory(body = view)
@@ -42,7 +44,7 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
 
     contract(contract)
 
-    zenMaster<V, A, S>(viewLifecycleCoroutineScopeProvider, uiCoroutineContext)
+    zenMaster<V, A, S>(viewLifecycleCoroutineScopeProvider, uiCoroutineContext, middleware)
 
     factory(body = stateMutator)
 

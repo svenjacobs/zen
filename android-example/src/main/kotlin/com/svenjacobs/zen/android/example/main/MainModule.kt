@@ -11,6 +11,7 @@ import com.svenjacobs.zen.android.example.main.state.MainTransformation
 import com.svenjacobs.zen.android.example.main.state.MainViewModel
 import com.svenjacobs.zen.android.example.main.view.MainFragment
 import com.svenjacobs.zen.android.example.main.view.MainView
+import com.svenjacobs.zen.android.master.AndroidLoggingMiddleware
 import com.svenjacobs.zen.di.support.katana.ZenModule
 import org.rewedigital.katana.Module
 import org.rewedigital.katana.androidx.viewmodel.viewModel
@@ -31,7 +32,8 @@ fun MainModule(
                     get(name = COROUTINE_CONTEXT_IO)
                 )
             },
-            contract = { MainZenMasterContract() }
+            contract = { MainZenMasterContract() },
+            middleware = { AndroidLoggingMiddleware() }
         )
     )
 ) {

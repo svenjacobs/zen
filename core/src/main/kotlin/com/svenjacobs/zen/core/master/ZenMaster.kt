@@ -44,6 +44,13 @@ interface ZenMaster {
         suspend fun stateChanges(state: Flow<S>, view: V): Flow<Any?>
     }
 
+    interface Middleware<A : Action, S : State> {
+
+        suspend fun onAction(action: A): A
+
+        suspend fun onState(state: S): S
+    }
+
     fun onViewReady()
 }
 
@@ -51,13 +58,14 @@ interface ZenMaster {
  * @param viewCoroutineScopeProvider Should provide a [CoroutineScope] that is attached to the lifecycle of the view
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
  */
-class ZenMasterImpl<in V : ZenView, in A : Action, in S : State>(
+class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val view: V,
     private val viewCoroutineScopeProvider: () -> CoroutineScope,
     private val transformer: Transformer<A, S>,
     private val contract: Contract<V, A, S>,
     private val state: StateMutator<S>,
-    private val uiContext: CoroutineContext = Dispatchers.Main
+    private val uiContext: CoroutineContext = Dispatchers.Main,
+    private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware()
 ) : ZenMaster {
 
     /**
@@ -69,8 +77,9 @@ class ZenMasterImpl<in V : ZenView, in A : Action, in S : State>(
     override fun onViewReady() {
         viewCoroutineScopeProvider().let { scope ->
             scope.launch { contract.onViewReady(view) }
-            val actions = contract.actions(view).flowOn(uiContext)
+            val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
             val state = transformer.transform(actions)
+                .map(middleware::onState)
                 .onEach { state.value = it }
                 .flowOn(uiContext)
                 // broadcastIn() & asFlow() is used here to create a "shared" state flow

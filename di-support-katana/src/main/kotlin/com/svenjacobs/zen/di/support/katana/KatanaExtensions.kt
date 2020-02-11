@@ -1,6 +1,7 @@
 package com.svenjacobs.zen.di.support.katana
 
 import com.svenjacobs.zen.core.action.Action
+import com.svenjacobs.zen.core.master.NopMiddleware
 import com.svenjacobs.zen.core.master.ZenMaster
 import com.svenjacobs.zen.core.master.ZenMasterImpl
 import com.svenjacobs.zen.core.state.State
@@ -57,7 +58,8 @@ fun <V : ZenView, A : Action, S : State> ModuleBindingContext.contract(
  */
 inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zenMaster(
     crossinline viewLifecycleCoroutineScopeProvider: ProviderDsl.() -> () -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE) },
-    crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) }
+    crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
+    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
 ) =
     factory<ZenMaster> {
         ZenMasterImpl<V, A, S>(
@@ -66,7 +68,8 @@ inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zen
             get(),
             get(),
             get(),
-            uiCoroutineContext()
+            uiCoroutineContext(),
+            middleware()
         )
     }
 
