@@ -18,6 +18,7 @@ import kotlin.coroutines.CoroutineContext
  *
  * The [Contract] declares the interaction between master and view.
  *
+ * @see Contract
  * @see Transformer
  */
 interface ZenMaster {
@@ -25,8 +26,10 @@ interface ZenMaster {
     interface Contract<in V : ZenView, out A : Action, in S : State> {
 
         /**
-         * Permits initialization after view is ready.
+         * Allows initialization of contract after view is ready.
          * Suspending function is called in coroutine scope of view.
+         *
+         * Is called before [actions] and [stateChanges].
          */
         suspend fun onViewReady(view: V) {}
 
@@ -75,8 +78,9 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
      * transformed Flow of [State] to [Contract.stateChanges].
      */
     override fun onViewReady() {
-        viewCoroutineScopeProvider().let { scope ->
-            scope.launch { contract.onViewReady(view) }
+        viewCoroutineScopeProvider().launch {
+            contract.onViewReady(view)
+
             val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
             val state = transformer.transform(actions)
                 .map(middleware::onState)
@@ -87,9 +91,10 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
                 // only performed once.
                 // This should be replaced by share() operator once available:
                 // https://github.com/Kotlin/kotlinx.coroutines/issues/1261
-                .broadcastIn(scope)
+                .broadcastIn(this)
                 .asFlow()
-            scope.launch { contract.stateChanges(state, view).collect() }
+
+            contract.stateChanges(state, view).collect()
         }
     }
 }
