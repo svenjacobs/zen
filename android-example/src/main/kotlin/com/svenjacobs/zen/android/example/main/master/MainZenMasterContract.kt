@@ -2,6 +2,7 @@ package com.svenjacobs.zen.android.example.main.master
 
 import com.svenjacobs.zen.android.example.main.action.MainAction
 import com.svenjacobs.zen.android.example.main.action.MainAction.LoadAction
+import com.svenjacobs.zen.android.example.main.action.MainAction.LoadUserPostsAction
 import com.svenjacobs.zen.android.example.main.state.MainState
 import com.svenjacobs.zen.android.example.main.view.MainView
 import com.svenjacobs.zen.core.master.ZenMaster
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.merge
 class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState> {
 
     override fun actions(view: MainView) =
-        view.onCreateEvents.map { LoadAction }
+        merge(
+            view.onCreateEvents.map { LoadAction },
+            view.onFloatingActionButtonClicks.map { LoadUserPostsAction(userId = 1) }
+        )
 
     override suspend fun stateChanges(state: Flow<MainState>, view: MainView) =
         merge(

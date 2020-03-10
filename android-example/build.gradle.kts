@@ -17,6 +17,10 @@ android {
         versionName = "1.0"
     }
 
+    viewBinding {
+        isEnabled = true
+    }
+
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
     }
@@ -42,5 +46,6 @@ dependencies {
     implementation("org.rewedigital.katana:katana-androidx-viewmodel:1.13.1")
     implementation("io.ktor:ktor-client-android:1.3.1")
     implementation("io.ktor:ktor-client-serialization-jvm:1.3.1")
+    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:0.10.1")
     implementation("io.github.reactivecircus.flowbinding:flowbinding-lifecycle:0.10.1")
 }

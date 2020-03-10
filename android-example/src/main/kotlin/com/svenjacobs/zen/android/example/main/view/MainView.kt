@@ -8,6 +8,8 @@ interface MainView : ZenView {
 
     val onCreateEvents: Flow<Unit>
 
+    val onFloatingActionButtonClicks: Flow<Unit>
+
     fun setLoadingStateVisible(visible: Boolean)
 
     fun setErrorStateVisible(visible: Boolean)

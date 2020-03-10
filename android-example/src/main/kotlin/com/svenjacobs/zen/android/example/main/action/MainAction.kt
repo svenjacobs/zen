@@ -5,4 +5,8 @@ import com.svenjacobs.zen.core.action.Action
 sealed class MainAction : Action {
 
     object LoadAction : MainAction()
+
+    data class LoadUserPostsAction(
+        val userId: Int
+    ) : MainAction()
 }

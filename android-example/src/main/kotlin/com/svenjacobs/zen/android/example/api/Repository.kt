@@ -12,5 +12,9 @@ class Repository(
     suspend fun posts() = flow {
         emit(client.get<List<JsonPost>>("https://jsonplaceholder.typicode.com/posts"))
     }
+
+    suspend fun postsByUser(userId: Int) = flow {
+        emit(client.get<List<JsonPost>>("https://jsonplaceholder.typicode.com/posts?userId=$userId"))
+    }
 }
 
