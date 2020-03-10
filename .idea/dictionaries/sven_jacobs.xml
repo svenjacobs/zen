@@ -3,6 +3,7 @@
     <words>
       <w>amshove</w>
       <w>constraintlayout</w>
+      <w>coroutines</w>
       <w>dcendents</w>
       <w>dropbox</w>
       <w>flowbinding</w>
@@ -19,6 +20,7 @@
       <w>spekframework</w>
       <w>svenjacobs</w>
       <w>viewmodel</w>
+      <w>xopt</w>
       <w>xuse</w>
     </words>
   </dictionary>
