@@ -4,7 +4,7 @@ package com.svenjacobs.zen.android.example.inject
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.svenjacobs.zen.di.support.katana.Names.ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE
+import com.svenjacobs.zen.di.support.katana.Names.ZEN_COROUTINE_SCOPE_VIEW_LIFECYCLE
 import org.rewedigital.katana.Module
 import org.rewedigital.katana.dsl.factory
 
@@ -20,7 +20,7 @@ fun ZenFragmentCoroutineScopeModule(
     name = "ZenFragmentCoroutineScopeModule"
 ) {
 
-    factory(name = ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE) {
-        { fragment.viewLifecycleOwner.lifecycleScope }
+    factory(name = ZEN_COROUTINE_SCOPE_VIEW_LIFECYCLE) {
+        fragment.viewLifecycleOwner.lifecycleScope
     }
 }

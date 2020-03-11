@@ -13,12 +13,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState> {
 
+    @Suppress("RedundantWith")
     override fun CoroutineScope.onViewReady(view: MainView) {
-        launch(SupervisorJob(coroutineContext[Job])) {
+        with(this + SupervisorJob(coroutineContext[Job])) {
             // Here for instance click events could be handled that do not modify the state but
             // navigate to another feature / Fragment.
         }
