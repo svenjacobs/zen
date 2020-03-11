@@ -9,7 +9,6 @@ import com.svenjacobs.zen.core.view.ZenView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -60,12 +59,12 @@ interface ZenMaster {
 }
 
 /**
- * @param viewCoroutineScopeProvider Should provide a [CoroutineScope] that is attached to the lifecycle of the view
+ * @param viewCoroutineScope Should provide a [CoroutineScope] that is attached to the lifecycle of the view
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
  */
 class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val view: V,
-    private val viewCoroutineScopeProvider: () -> CoroutineScope,
+    private val viewCoroutineScope: CoroutineScope,
     private val transformer: Transformer<A, S>,
     private val contract: Contract<V, A, S>,
     private val state: StateMutator<S>,
@@ -80,23 +79,21 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
      * transformed Flow of [State] to [Contract.stateChanges].
      */
     override fun onViewReady() {
-        viewCoroutineScopeProvider().launch {
-            with(contract) { onViewReady(view) }
+        with(contract) { viewCoroutineScope.onViewReady(view) }
 
-            val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
-            val state = transformer.transform(actions)
-                .map(middleware::onState)
-                .onEach { state.value = it }
-                .flowOn(uiContext)
-                // broadcastIn() & asFlow() is used here to create a "shared" state flow
-                // that is unbundled from further downstream transformations so that collection is
-                // only performed once.
-                // This should be replaced by share() operator once available:
-                // https://github.com/Kotlin/kotlinx.coroutines/issues/1261
-                .broadcastIn(this)
-                .asFlow()
+        val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
+        val state = transformer.transform(actions)
+            .map(middleware::onState)
+            .onEach { state.value = it }
+            .flowOn(uiContext)
+            // broadcastIn() & asFlow() is used here to create a "shared" state flow
+            // that is unbundled from further downstream transformations so that collection is
+            // only performed once.
+            // This should be replaced by share() operator once available:
+            // https://github.com/Kotlin/kotlinx.coroutines/issues/1261
+            .broadcastIn(viewCoroutineScope)
+            .asFlow()
 
-            contract.stateChanges(state, view).collect()
-        }
+        contract.stateChanges(state, view).launchIn(viewCoroutineScope)
     }
 }

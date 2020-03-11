@@ -22,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Provides bindings required for injection of a [ZenMaster].
  *
- * If [stateMutator], [viewLifecycleCoroutineScopeProvider], [transformationCoroutineContext] and [uiCoroutineContext]
+ * If [stateMutator], [viewLifecycleCoroutineScope], [transformationCoroutineContext] and [uiCoroutineContext]
  * are not bound in another module to default names (see [Names]), bindings must be provided here.
  */
 inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
@@ -30,7 +30,7 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
     noinline transformation: ProviderDsl.() -> Transformer.Transformation<A, S>,
     noinline contract: ProviderDsl.() -> ZenMaster.Contract<V, A, S>,
     noinline stateMutator: ProviderDsl.() -> StateMutator<S> = { get(name = ZEN_STATE_MUTATOR) },
-    crossinline viewLifecycleCoroutineScopeProvider: ProviderDsl.() -> () -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE) },
+    crossinline viewLifecycleCoroutineScope: ProviderDsl.() -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_VIEW_LIFECYCLE) },
     noinline transformationCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_TRANSFORMATION) },
     crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
     crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
@@ -44,7 +44,7 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
 
     contract(contract)
 
-    zenMaster<V, A, S>(viewLifecycleCoroutineScopeProvider, uiCoroutineContext, middleware)
+    zenMaster<V, A, S>(viewLifecycleCoroutineScope, uiCoroutineContext, middleware)
 
     factory(body = stateMutator)
 

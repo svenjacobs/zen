@@ -57,14 +57,14 @@ fun <V : ZenView, A : Action, S : State> ModuleBindingContext.contract(
  * @see ZenModule
  */
 inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zenMaster(
-    crossinline viewLifecycleCoroutineScopeProvider: ProviderDsl.() -> () -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_PROVIDER_VIEW_LIFECYCLE) },
+    crossinline viewLifecycleCoroutineScope: ProviderDsl.() -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_VIEW_LIFECYCLE) },
     crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
     crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
 ) =
     factory<ZenMaster> {
         ZenMasterImpl<V, A, S>(
             get(),
-            viewLifecycleCoroutineScopeProvider(),
+            viewLifecycleCoroutineScope(),
             get(),
             get(),
             get(),
