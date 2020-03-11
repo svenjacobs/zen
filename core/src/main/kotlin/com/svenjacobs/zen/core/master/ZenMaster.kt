@@ -59,15 +59,15 @@ interface ZenMaster {
 }
 
 /**
- * @param viewCoroutineScope Should provide a [CoroutineScope] that is attached to the lifecycle of the view
+ * @param viewCoroutineScope A [CoroutineScope] that is attached to the lifecycle of the view
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
  */
 class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val view: V,
-    private val viewCoroutineScope: CoroutineScope,
-    private val transformer: Transformer<A, S>,
     private val contract: Contract<V, A, S>,
+    private val transformer: Transformer<A, S>,
     private val state: StateMutator<S>,
+    private val viewCoroutineScope: CoroutineScope,
     private val uiContext: CoroutineContext = Dispatchers.Main.immediate,
     private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware()
 ) : ZenMaster {

@@ -64,10 +64,10 @@ inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zen
     factory<ZenMaster> {
         ZenMasterImpl<V, A, S>(
             get(),
+            get(),
+            get(),
+            get(),
             viewLifecycleCoroutineScope(),
-            get(),
-            get(),
-            get(),
             uiCoroutineContext(),
             middleware()
         )
