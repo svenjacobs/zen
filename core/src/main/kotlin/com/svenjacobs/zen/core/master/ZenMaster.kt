@@ -12,16 +12,17 @@ import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 /**
- * A ZenMaster receives a [Flow] of [Action], transforming them into state (changes) (via [Transformer]) and finally
- * delegating each state to [Contract.stateChanges].
- *
- * The [Contract] declares the interaction between master and view.
+ * Receives a [Flow] of [Action], transforms it into state (changes) (via [Transformer]) and
+ * finally delegates each state to [Contract.stateChanges].
  *
  * @see Contract
  * @see Transformer
  */
 interface ZenMaster {
 
+    /**
+     * Describes interaction/relation between master and view.
+     */
     interface Contract<in V : ZenView, out A : Action, in S : State> {
 
         /**
@@ -55,12 +56,17 @@ interface ZenMaster {
         suspend fun onState(state: S): S
     }
 
+    /**
+     * Notifies ZenMaster that view is ready for Flow transformation.
+     */
     fun onViewReady()
 }
 
 /**
  * @param viewCoroutineScope A [CoroutineScope] that is attached to the lifecycle of the view
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
+ *
+ * @see ZenMaster
  */
 class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val view: V,
@@ -73,9 +79,9 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
 ) : ZenMaster {
 
     /**
-     * Should be called when view is ready.
+     * Notifies ZenMaster that view is ready for Flow transformation.
      *
-     * Will pass [Contract.actions] to [Transformer] for transformation, afterwards delegating
+     * Passes [Contract.actions] to [Transformer] for transformation, afterwards delegates
      * transformed Flow of [State] to [Contract.stateChanges].
      */
     override fun onViewReady() {
