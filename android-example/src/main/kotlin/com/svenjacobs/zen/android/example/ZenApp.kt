@@ -9,6 +9,8 @@ class ZenApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        LeakCanaryHelper.configure()
+
         applicationComponent = Component(ApplicationModule)
     }
 

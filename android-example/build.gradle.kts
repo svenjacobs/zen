@@ -23,6 +23,8 @@ android {
 
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
+        getByName("debug").java.srcDirs("src/debug/kotlin")
+        getByName("release").java.srcDirs("src/release/kotlin")
     }
 
     packagingOptions {

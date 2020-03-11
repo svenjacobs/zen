@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.*
 
 class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState> {
 
-    @Suppress("RedundantWith")
     override fun CoroutineScope.onViewReady(view: MainView) {
         // Here for instance click events could be handled that do not modify the state but
         // navigate to another feature / Fragment.
