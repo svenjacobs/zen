@@ -1,5 +1,6 @@
 package com.svenjacobs.zen.android.example.main.master
 
+import android.util.Log
 import com.svenjacobs.zen.android.example.main.action.MainAction
 import com.svenjacobs.zen.android.example.main.action.MainAction.LoadAction
 import com.svenjacobs.zen.android.example.main.action.MainAction.LoadUserPostsAction
@@ -8,21 +9,19 @@ import com.svenjacobs.zen.android.example.main.view.MainView
 import com.svenjacobs.zen.core.master.ZenMaster
 import com.svenjacobs.zen.core.state.sideEffect
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.plus
+import kotlinx.coroutines.flow.*
 
 class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState> {
 
     @Suppress("RedundantWith")
     override fun CoroutineScope.onViewReady(view: MainView) {
-        with(this + SupervisorJob(coroutineContext[Job])) {
-            // Here for instance click events could be handled that do not modify the state but
-            // navigate to another feature / Fragment.
-        }
+        // Here for instance click events could be handled that do not modify the state but
+        // navigate to another feature / Fragment.
+
+        // Example of handling lifecycle events for tracking for example
+        view.viewLifecycleEvents
+            .onEach { Log.d(TAG, "View lifecycle event: ${it.name}") }
+            .launchIn(this)
     }
 
     override fun actions(view: MainView) =
@@ -46,4 +45,8 @@ class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState
                 onEach = { view.renderPosts(value) }
             )
         )
+
+    private companion object {
+        private const val TAG = "MainZenMasterContract"
+    }
 }

@@ -1,5 +1,6 @@
 package com.svenjacobs.zen.android.example.main.view
 
+import androidx.lifecycle.Lifecycle
 import com.svenjacobs.zen.android.example.api.model.JsonPost
 import com.svenjacobs.zen.core.view.ZenView
 import kotlinx.coroutines.flow.Flow
@@ -7,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface MainView : ZenView {
 
     val onCreateEvents: Flow<Unit>
+
+    val viewLifecycleEvents: Flow<Lifecycle.Event>
 
     val onFloatingActionButtonClicks: Flow<Unit>
 

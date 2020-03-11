@@ -42,6 +42,9 @@ class MainFragment : ZenFragment(),
             .filter { it == Event.ON_CREATE }
             .map { Unit }
 
+    override val viewLifecycleEvents: Flow<Event>
+        get() = viewLifecycleOwner.lifecycle.events()
+
     override val onFloatingActionButtonClicks: Flow<Unit>
         get() = binding.mainButton.clicks()
 

@@ -56,7 +56,7 @@ class MainTransformation(
                 )
             }
             .catch { e ->
-                Log.e("MainTransformation", "Error while loading posts", e)
+                Log.e(TAG, "Error while loading posts", e)
 
                 emit(
                     currentState.copy(
@@ -68,4 +68,8 @@ class MainTransformation(
             .onStart {
                 emit(currentState.copy(isLoading = true))
             }
+
+    private companion object {
+        private const val TAG = "MainTransformation"
+    }
 }
