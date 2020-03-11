@@ -1,5 +1,6 @@
 package com.svenjacobs.zen.android.example.main.state
 
+import android.util.Log
 import com.svenjacobs.zen.android.example.api.Repository
 import com.svenjacobs.zen.android.example.api.model.JsonPost
 import com.svenjacobs.zen.android.example.main.action.MainAction
@@ -54,7 +55,9 @@ class MainTransformation(
                     posts = it
                 )
             }
-            .catch {
+            .catch { e ->
+                Log.e("MainTransformation", "Error while loading posts", e)
+
                 emit(
                     currentState.copy(
                         isLoading = false,

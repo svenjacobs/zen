@@ -12,5 +12,5 @@ val ZenCoroutineModule = Module(
 
     singleton(name = ZEN_COROUTINE_CONTEXT_TRANSFORMATION) { Dispatchers.Default }
 
-    singleton(name = ZEN_COROUTINE_CONTEXT_UI) { Dispatchers.Main }
+    singleton(name = ZEN_COROUTINE_CONTEXT_UI) { Dispatchers.Main.immediate }
 }

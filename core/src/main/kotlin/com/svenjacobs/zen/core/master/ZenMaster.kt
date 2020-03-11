@@ -27,11 +27,13 @@ interface ZenMaster {
 
         /**
          * Allows initialization of contract after view is ready.
-         * Suspending function is called in coroutine scope of view.
          *
          * Is called before [actions] and [stateChanges].
+         *
+         * The context (`this`) of the function is the coroutine scope of the view.
+         * This allows launching coroutines if necessary.
          */
-        suspend fun onViewReady(view: V) {}
+        fun CoroutineScope.onViewReady(view: V) {}
 
         /**
          * Returns [Flow] of incoming [Actions][Action].
@@ -44,7 +46,7 @@ interface ZenMaster {
         /**
          * Handles [State] changes, adding side effects to Flow that perform related functions on [view].
          */
-        suspend fun stateChanges(state: Flow<S>, view: V): Flow<Any?>
+        fun stateChanges(state: Flow<S>, view: V): Flow<Any?>
     }
 
     interface Middleware<A : Action, S : State> {
@@ -67,7 +69,7 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val transformer: Transformer<A, S>,
     private val contract: Contract<V, A, S>,
     private val state: StateMutator<S>,
-    private val uiContext: CoroutineContext = Dispatchers.Main,
+    private val uiContext: CoroutineContext = Dispatchers.Main.immediate,
     private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware()
 ) : ZenMaster {
 
@@ -79,7 +81,7 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
      */
     override fun onViewReady() {
         viewCoroutineScopeProvider().launch {
-            contract.onViewReady(view)
+            with(contract) { onViewReady(view) }
 
             val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
             val state = transformer.transform(actions)

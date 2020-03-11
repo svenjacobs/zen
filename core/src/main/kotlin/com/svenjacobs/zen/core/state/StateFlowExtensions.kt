@@ -4,12 +4,12 @@ import kotlinx.coroutines.flow.*
 
 /**
  * Adds a side effect on a specific selection of [State] object.
- * Ensures that values are non-null and distinct until changed.
+ * Ensures that values are non-null **and** distinct until changed.
  *
  * @see nullableSideEffect
  * @see SelectionWithState
  */
-suspend fun <S : State, T : Any> Flow<S>.sideEffect(
+fun <S : State, T : Any> Flow<S>.sideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T, S>.() -> Unit
 ) =
@@ -24,7 +24,7 @@ suspend fun <S : State, T : Any> Flow<S>.sideEffect(
  * @see sideEffect
  * @see SelectionWithState
  */
-suspend fun <S : State, T> Flow<S>.nullableSideEffect(
+fun <S : State, T> Flow<S>.nullableSideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T?, S>.() -> Unit
 ) =
