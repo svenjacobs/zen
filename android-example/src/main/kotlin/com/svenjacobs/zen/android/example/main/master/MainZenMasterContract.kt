@@ -6,6 +6,7 @@ import com.svenjacobs.zen.android.example.main.action.MainAction.LoadAction
 import com.svenjacobs.zen.android.example.main.action.MainAction.LoadUserPostsAction
 import com.svenjacobs.zen.android.example.main.state.MainState
 import com.svenjacobs.zen.android.example.main.view.MainView
+import com.svenjacobs.zen.core.action.ActionPublisher
 import com.svenjacobs.zen.core.master.ZenMaster
 import com.svenjacobs.zen.core.state.sideEffect
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.*
 
 class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState> {
 
-    override fun CoroutineScope.onViewReady(view: MainView) {
+    override fun CoroutineScope.onViewReady(
+        view: MainView,
+        publisher: ActionPublisher<MainAction>
+    ) {
         // Here for instance click events could be handled that do not modify the state but
         // navigate to another feature / Fragment.
 
@@ -21,13 +25,13 @@ class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState
         view.viewLifecycleEvents
             .onEach { Log.d(TAG, "View lifecycle event: ${it.name}") }
             .launchIn(this)
+
+        // Publish LoadAction since view is ready
+        publisher.publish(LoadAction)
     }
 
     override fun actions(view: MainView) =
-        merge(
-            view.onCreateEvents.map { LoadAction },
-            view.onFloatingActionButtonClicks.map { LoadUserPostsAction(userId = 1) }
-        )
+        view.onFloatingActionButtonClicks.map { LoadUserPostsAction(userId = 1) }
 
     override fun stateChanges(state: Flow<MainState>, view: MainView) =
         merge(

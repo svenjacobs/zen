@@ -1,6 +1,7 @@
 package com.svenjacobs.zen.core.master
 
 import com.svenjacobs.zen.core.action.Action
+import com.svenjacobs.zen.core.action.ActionPublisher
 import com.svenjacobs.zen.core.master.ZenMaster.Contract
 import com.svenjacobs.zen.core.state.State
 import com.svenjacobs.zen.core.state.StateMutator
@@ -23,7 +24,7 @@ interface ZenMaster {
     /**
      * Describes interaction/relation between master and view.
      */
-    interface Contract<in V : ZenView, out A : Action, in S : State> {
+    interface Contract<in V : ZenView, A : Action, in S : State> {
 
         /**
          * Allows initialization of contract after view is ready.
@@ -32,8 +33,10 @@ interface ZenMaster {
          *
          * The context (`this`) of the function is the coroutine scope of the view.
          * This allows launching coroutines if necessary.
+         *
+         * @param publisher Enables optional publication of flow emissions (for instance an `OnViewReady` action)
          */
-        fun CoroutineScope.onViewReady(view: V) {}
+        fun CoroutineScope.onViewReady(view: V, publisher: ActionPublisher<A>) {}
 
         /**
          * Returns [Flow] of incoming [Actions][Action].
@@ -85,9 +88,17 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
      * transformed Flow of [State] to [Contract.stateChanges].
      */
     override fun onViewReady() {
-        with(contract) { viewCoroutineScope.onViewReady(view) }
+        val publisher = ActionPublisher<A>()
 
-        val actions = contract.actions(view).map(middleware::onAction).flowOn(uiContext)
+        with(contract) { viewCoroutineScope.onViewReady(view, publisher) }
+
+        val actions = merge(
+            publisher.actions,
+            contract.actions(view)
+        )
+            .map(middleware::onAction)
+            .flowOn(uiContext)
+
         val state = transformer.transform(actions)
             .map(middleware::onState)
             .onEach { state.value = it }

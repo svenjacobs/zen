@@ -14,8 +14,6 @@ import com.svenjacobs.zen.android.example.main.MainModule
 import com.svenjacobs.zen.android.view.ZenFragment
 import com.svenjacobs.zen.core.master.ZenMaster
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import org.rewedigital.katana.Component
 import org.rewedigital.katana.KatanaTrait
 import org.rewedigital.katana.inject
@@ -36,11 +34,6 @@ class MainFragment : ZenFragment(),
             .build()
 
     override val zenMaster: ZenMaster by inject()
-
-    override val onCreateEvents: Flow<Unit>
-        get() = lifecycle.events()
-            .filter { it == Event.ON_CREATE }
-            .map { Unit }
 
     override val viewLifecycleEvents: Flow<Event>
         get() = viewLifecycleOwner.lifecycle.events()

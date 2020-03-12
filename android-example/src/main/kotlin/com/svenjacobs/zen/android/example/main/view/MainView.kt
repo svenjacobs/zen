@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainView : ZenView {
 
-    val onCreateEvents: Flow<Unit>
-
     val viewLifecycleEvents: Flow<Lifecycle.Event>
 
     val onFloatingActionButtonClicks: Flow<Unit>
