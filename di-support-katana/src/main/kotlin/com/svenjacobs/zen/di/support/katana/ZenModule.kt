@@ -11,7 +11,6 @@ import com.svenjacobs.zen.core.state.StateMutator
 import com.svenjacobs.zen.core.state.Transformer
 import com.svenjacobs.zen.core.view.ZenView
 import com.svenjacobs.zen.di.support.katana.Names.*
-import kotlinx.coroutines.CoroutineScope
 import org.rewedigital.katana.Module
 import org.rewedigital.katana.dsl.ProviderDsl
 import org.rewedigital.katana.dsl.alias
@@ -22,15 +21,14 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Provides bindings required for injection of a [ZenMaster].
  *
- * If [stateMutator], [viewLifecycleCoroutineScope], [transformationCoroutineContext] and [uiCoroutineContext]
- * are not bound in another module to default names (see [Names]), bindings must be provided here.
+ * If [stateMutator], [transformationCoroutineContext] and [uiCoroutineContext] are not bound in
+ * another module to default names (see [Names]), bindings must be provided here.
  */
 inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
     noinline view: ProviderDsl.() -> V,
     noinline transformation: ProviderDsl.() -> Transformer.Transformation<A, S>,
     noinline contract: ProviderDsl.() -> ZenMaster.Contract<V, A, S>,
     noinline stateMutator: ProviderDsl.() -> StateMutator<S> = { get(name = ZEN_STATE_MUTATOR) },
-    crossinline viewLifecycleCoroutineScope: ProviderDsl.() -> CoroutineScope = { get(name = ZEN_COROUTINE_SCOPE_VIEW_LIFECYCLE) },
     noinline transformationCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_TRANSFORMATION) },
     crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
     crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
@@ -44,7 +42,7 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
 
     contract(contract)
 
-    zenMaster<V, A, S>(viewLifecycleCoroutineScope, uiCoroutineContext, middleware)
+    zenMaster<V, A, S>(uiCoroutineContext, middleware)
 
     factory(body = stateMutator)
 

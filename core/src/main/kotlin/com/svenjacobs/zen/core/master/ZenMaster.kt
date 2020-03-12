@@ -61,12 +61,13 @@ interface ZenMaster {
 
     /**
      * Notifies ZenMaster that view is ready for Flow transformation.
+     *
+     * @param viewCoroutineScope CoroutineScope that is attached to the lifecycle of the view
      */
-    fun onViewReady()
+    fun onViewReady(viewCoroutineScope: CoroutineScope)
 }
 
 /**
- * @param viewCoroutineScope A [CoroutineScope] that is attached to the lifecycle of the view
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
  *
  * @see ZenMaster
@@ -76,7 +77,6 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val contract: Contract<V, A, S>,
     private val transformer: Transformer<A, S>,
     private val state: StateMutator<S>,
-    private val viewCoroutineScope: CoroutineScope,
     private val uiContext: CoroutineContext = Dispatchers.Main.immediate,
     private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware()
 ) : ZenMaster {
@@ -86,8 +86,10 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
      *
      * Passes [Contract.actions] to [Transformer] for transformation, afterwards delegates
      * transformed Flow of [State] to [Contract.stateChanges].
+     *
+     * @param viewCoroutineScope CoroutineScope that is attached to the lifecycle of the view
      */
-    override fun onViewReady() {
+    override fun onViewReady(viewCoroutineScope: CoroutineScope) {
         val publisher = ActionPublisher<A>()
 
         with(contract) { viewCoroutineScope.onViewReady(view, publisher) }

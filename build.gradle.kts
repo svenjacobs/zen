@@ -29,7 +29,7 @@ subprojects {
     }
 
     group = "com.svenjacobs.zen"
-    version = "0.9"
+    version = "0.10"
 
     tasks.withType<KotlinJvmCompile> {
         kotlinOptions {

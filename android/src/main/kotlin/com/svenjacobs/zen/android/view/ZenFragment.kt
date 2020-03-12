@@ -3,6 +3,7 @@ package com.svenjacobs.zen.android.view
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.svenjacobs.zen.core.master.ZenMaster
 
 /**
@@ -27,6 +28,6 @@ abstract class ZenFragment : Fragment() {
 
         onBeforeZenMasterViewReady(view, savedInstanceState)
 
-        zenMaster.onViewReady()
+        zenMaster.onViewReady(viewLifecycleOwner.lifecycleScope)
     }
 }
