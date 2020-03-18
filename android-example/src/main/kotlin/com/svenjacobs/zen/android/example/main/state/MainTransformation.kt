@@ -6,7 +6,10 @@ import com.svenjacobs.zen.android.example.api.model.JsonPost
 import com.svenjacobs.zen.android.example.main.action.MainAction
 import com.svenjacobs.zen.android.example.main.action.MainAction.*
 import com.svenjacobs.zen.common.coroutines.flow.boxInFlow
+import com.svenjacobs.zen.core.state.DefaultStateAccessor
+import com.svenjacobs.zen.core.state.StateAccessor
 import com.svenjacobs.zen.core.state.Transformer
+import com.svenjacobs.zen.core.state.withDefault
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
@@ -15,72 +18,62 @@ class MainTransformation(
     private val ioCoroutineContext: CoroutineContext
 ) : Transformer.Transformation<MainAction, MainState> {
 
-    override suspend fun invoke(action: MainAction, currentState: MainState?): Flow<MainState> {
-        val state = currentState ?: MainState()
+    override suspend fun invoke(
+        action: MainAction,
+        state: StateAccessor<MainState>
+    ): Flow<MainState> {
+        val defaultState = state.withDefault { MainState() }
         return boxInFlow(
             when (action) {
-                is LoadAction -> loadAction(state)
-                is LoadUserPostsAction -> loadUserPostsAction(action, state)
-                is ItemClickAction -> itemClickAction(action, state)
-                is DialogResponseAction -> dialogResponseAction(action, state)
+                is LoadAction -> loadAction(defaultState)
+                is LoadUserPostsAction -> loadUserPostsAction(action, defaultState)
+                is ItemClickAction -> itemClickAction(action, defaultState)
+                is DialogResponseAction -> dialogResponseAction(action, defaultState)
             }
         )
     }
 
-    private suspend fun loadAction(
-        currentState: MainState
-    ) =
+    private suspend fun loadAction(state: DefaultStateAccessor<MainState>) =
         loadPosts(
             repository.posts(),
-            currentState
+            state
         )
 
     private suspend fun loadUserPostsAction(
         action: LoadUserPostsAction,
-        currentState: MainState
+        state: DefaultStateAccessor<MainState>
     ) =
         loadPosts(
             repository.postsByUser(action.userId),
-            currentState
+            state
         )
 
     private fun itemClickAction(
         action: ItemClickAction,
-        currentState: MainState
-    ) =
-        flowOf(
-            currentState.copy(
-                dialogTitle = action.item.title
-            ),
-            currentState.copy(
-                dialogTitle = null
-            )
-        )
+        state: DefaultStateAccessor<MainState>
+    ): Flow<MainState> =
+        flow {
+            emit(state.value.copy(dialogTitle = action.item.title))
+            emit(state.value.copy(dialogTitle = null))
+        }
 
-    // TODO: Do we rather need StateAccessor here?
     private fun dialogResponseAction(
         action: DialogResponseAction,
-        currentState: MainState
+        state: DefaultStateAccessor<MainState>
     ) =
-        flowOf(
-            currentState.copy(
-                dialogTitle = null,
-                toastMessage = if (action.success) "YES was clicked" else "NO was clicked"
-            ),
-            currentState.copy(
-                dialogTitle = null,
-                toastMessage = null
-            )
-        )
+        flow {
+            emit(state.value.copy(toastMessage = if (action.success) "YES was clicked" else "NO was clicked"))
+            emit(state.value.copy(toastMessage = null))
+        }
 
     private suspend fun loadPosts(
         flow: Flow<List<JsonPost>>,
-        currentState: MainState
+        state: DefaultStateAccessor<MainState>
     ) =
         flow
             .flowOn(ioCoroutineContext)
             .map {
-                currentState.copy(
+                state.value.copy(
                     isLoading = false,
                     posts = it
                 )
@@ -89,14 +82,14 @@ class MainTransformation(
                 Log.e(TAG, "Error while loading posts", e)
 
                 emit(
-                    currentState.copy(
+                    state.value.copy(
                         isLoading = false,
                         isError = true
                     )
                 )
             }
             .onStart {
-                emit(currentState.copy(isLoading = true))
+                emit(state.value.copy(isLoading = true))
             }
 
     private companion object {

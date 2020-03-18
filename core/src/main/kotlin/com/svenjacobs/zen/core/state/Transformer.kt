@@ -35,12 +35,12 @@ class Transformer<in A : Action, out S : State>(
          * Flow might emit multiple values, like a loading state followed by a content or error state.
          *
          * @param action [Action] that was dispatched
-         * @param currentState Current value of [State]. Might be `null` initially.
+         * @param state Provides access to current value of [State]. State might be `null` initially.
          */
-        suspend operator fun invoke(action: A, currentState: S?): Flow<S>
+        suspend operator fun invoke(action: A, state: StateAccessor<S>): Flow<S>
     }
 
     fun transform(actions: Flow<A>): Flow<S> =
-        actions.flatMapMerge { transformation(it, state.value) }
+        actions.flatMapMerge { transformation(it, state) }
             .flowOn(transformationContext)
 }
