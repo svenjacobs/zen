@@ -48,7 +48,7 @@ dependencies {
     implementation("org.rewedigital.katana:katana-androidx-viewmodel:1.13.1")
     implementation("io.ktor:ktor-client-android:1.3.1")
     implementation("io.ktor:ktor-client-serialization-jvm:1.3.1")
-    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:0.10.1")
-    implementation("io.github.reactivecircus.flowbinding:flowbinding-lifecycle:0.10.1")
+    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:0.10.2")
+    implementation("io.github.reactivecircus.flowbinding:flowbinding-lifecycle:0.10.2")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.2")
 }

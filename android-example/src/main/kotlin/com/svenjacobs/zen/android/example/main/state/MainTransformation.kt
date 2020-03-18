@@ -4,8 +4,7 @@ import android.util.Log
 import com.svenjacobs.zen.android.example.api.Repository
 import com.svenjacobs.zen.android.example.api.model.JsonPost
 import com.svenjacobs.zen.android.example.main.action.MainAction
-import com.svenjacobs.zen.android.example.main.action.MainAction.LoadAction
-import com.svenjacobs.zen.android.example.main.action.MainAction.LoadUserPostsAction
+import com.svenjacobs.zen.android.example.main.action.MainAction.*
 import com.svenjacobs.zen.common.coroutines.flow.boxInFlow
 import com.svenjacobs.zen.core.state.Transformer
 import kotlinx.coroutines.flow.*
@@ -22,6 +21,8 @@ class MainTransformation(
             when (action) {
                 is LoadAction -> loadAction(state)
                 is LoadUserPostsAction -> loadUserPostsAction(action, state)
+                is ItemClickAction -> itemClickAction(action, state)
+                is DialogResponseAction -> dialogResponseAction(action, state)
             }
         )
     }
@@ -41,6 +42,35 @@ class MainTransformation(
         loadPosts(
             repository.postsByUser(action.userId),
             currentState
+        )
+
+    private fun itemClickAction(
+        action: ItemClickAction,
+        currentState: MainState
+    ) =
+        flowOf(
+            currentState.copy(
+                dialogTitle = action.item.title
+            ),
+            currentState.copy(
+                dialogTitle = null
+            )
+        )
+
+    // TODO: Do we rather need StateAccessor here?
+    private fun dialogResponseAction(
+        action: DialogResponseAction,
+        currentState: MainState
+    ) =
+        flowOf(
+            currentState.copy(
+                dialogTitle = null,
+                toastMessage = if (action.success) "YES was clicked" else "NO was clicked"
+            ),
+            currentState.copy(
+                dialogTitle = null,
+                toastMessage = null
+            )
         )
 
     private suspend fun loadPosts(

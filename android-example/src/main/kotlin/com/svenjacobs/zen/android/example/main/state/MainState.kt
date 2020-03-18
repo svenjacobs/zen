@@ -6,5 +6,7 @@ import com.svenjacobs.zen.core.state.State
 data class MainState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val posts: List<JsonPost> = emptyList()
+    val posts: List<JsonPost> = emptyList(),
+    val dialogTitle: String? = null,
+    val toastMessage: String? = null
 ) : State

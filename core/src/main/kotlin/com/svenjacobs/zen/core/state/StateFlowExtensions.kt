@@ -4,12 +4,49 @@ import kotlinx.coroutines.flow.*
 
 /**
  * Adds a side effect on a specific selection of [State] object.
- * Ensures that values are non-null **and** distinct until changed.
+ * Ensures that values are non-null **and** distinct until changed allowing intermediate `null`
+ * values.
  *
+ * If the selected value becomes `null`, `onEach` is not called.
+ * However the next non-null value will be handled again, even if it's equal to the last known
+ * non-null value because technically there has been a change. For example:
+ *
+ * 1) "Hello world" -> is handled
+ * 2) null -> is not handled
+ * 3) "Hello world" -> is handled again
+ *
+ * Use [distinctSideEffect] if this behaviour is not desired.
+ *
+ * @see distinctSideEffect
  * @see nullableSideEffect
  * @see SelectionWithState
  */
 fun <S : State, T : Any> Flow<S>.sideEffect(
+    select: S.() -> T?,
+    onEach: suspend SelectionWithState<T, S>.() -> Unit
+) =
+    map { SelectionWithState.of(it.select(), it) }
+        .distinctUntilChanged()
+        .filterNotNull()
+        .onEach { it.onEach() }
+
+/**
+ * Adds a side effect on a specific selection of [State] object.
+ * Ensures that values are non-null **and** distinct until changed.
+ *
+ * Similar to [sideEffect] however equal values with `null` in between won't be handled.
+ *
+ * For example:
+ *
+ * 1) "Hello world" -> is handled
+ * 2) null -> is not handled
+ * 3) "Hello world" -> is NOT handled
+ * 4) "Hello world again" -> is handled
+ *
+ * @see sideEffect
+ * @see nullableSideEffect
+ */
+fun <S : State, T : Any> Flow<S>.distinctSideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T, S>.() -> Unit
 ) =
@@ -22,6 +59,7 @@ fun <S : State, T : Any> Flow<S>.sideEffect(
  * Ensures that values are distinct until changed.
  *
  * @see sideEffect
+ * @see distinctSideEffect
  * @see SelectionWithState
  */
 fun <S : State, T> Flow<S>.nullableSideEffect(

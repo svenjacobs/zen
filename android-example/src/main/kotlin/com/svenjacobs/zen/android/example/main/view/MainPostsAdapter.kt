@@ -7,6 +7,8 @@ import com.svenjacobs.zen.android.example.api.model.JsonPost
 
 class MainPostsAdapter : ListAdapter<JsonPost, MainPostsViewHolder>(ITEM_CALLBACK) {
 
+    var onItemClickListener: ((item: JsonPost) -> Unit)? = null
+
     var posts: List<JsonPost>
         get() = currentList
         set(value) {
@@ -17,7 +19,10 @@ class MainPostsAdapter : ListAdapter<JsonPost, MainPostsViewHolder>(ITEM_CALLBAC
         MainPostsViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: MainPostsViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(
+            getItem(position),
+            onItemClickListener
+        )
     }
 
     private companion object {

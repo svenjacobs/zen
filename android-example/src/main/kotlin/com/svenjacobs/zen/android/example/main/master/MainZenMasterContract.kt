@@ -2,8 +2,7 @@ package com.svenjacobs.zen.android.example.main.master
 
 import android.util.Log
 import com.svenjacobs.zen.android.example.main.action.MainAction
-import com.svenjacobs.zen.android.example.main.action.MainAction.LoadAction
-import com.svenjacobs.zen.android.example.main.action.MainAction.LoadUserPostsAction
+import com.svenjacobs.zen.android.example.main.action.MainAction.*
 import com.svenjacobs.zen.android.example.main.state.MainState
 import com.svenjacobs.zen.android.example.main.view.MainView
 import com.svenjacobs.zen.core.action.ActionPublisher
@@ -31,7 +30,11 @@ class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState
     }
 
     override fun actions(view: MainView) =
-        view.onFloatingActionButtonClicks.map { LoadUserPostsAction(userId = 1) }
+        merge(
+            view.onFloatingActionButtonClicks.map { LoadUserPostsAction(userId = 1) },
+            view.onItemClicks.map { ItemClickAction(it) },
+            view.dialogResponse.map { DialogResponseAction(it == MainView.DialogResponse.YES) }
+        )
 
     override fun stateChanges(state: Flow<MainState>, view: MainView) =
         merge(
@@ -46,6 +49,14 @@ class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState
             state.sideEffect(
                 select = { posts },
                 onEach = { view.renderPosts(value) }
+            ),
+            state.sideEffect(
+                select = { dialogTitle },
+                onEach = { view.showDialog(value) }
+            ),
+            state.sideEffect(
+                select = { toastMessage },
+                onEach = { view.showToast(value) }
             )
         )
 
