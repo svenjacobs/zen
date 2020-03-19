@@ -10,7 +10,7 @@ buildscript {
     dependencies {
         classpath("de.mannodermaus.gradle.plugins:android-junit5:1.6.0.0")
         classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.61")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.70")
     }
 }
 
@@ -35,9 +35,9 @@ subprojects {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
             freeCompilerArgs = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+                "-Xopt-in=kotlin.Experimental",
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=kotlinx.coroutines.FlowPreview"
             )
         }
     }

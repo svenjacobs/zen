@@ -12,6 +12,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("gradle-plugin", version = "1.3.61"))
+    implementation(kotlin("gradle-plugin", version = "1.3.70"))
     implementation("com.android.tools.build:gradle:3.6.1")
 }
