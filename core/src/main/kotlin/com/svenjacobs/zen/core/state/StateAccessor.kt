@@ -5,6 +5,7 @@ import kotlin.reflect.KProperty
 /**
  * Read-only wrapper around a [State].
  *
+ * @see stateAccessorOf
  * @see withDefault
  */
 interface StateAccessor<S : State> {
@@ -15,9 +16,16 @@ interface StateAccessor<S : State> {
 }
 
 /**
+ * Returns a simple state accessor that holds a static value
+ *
+ * @see SimpleStateAccessor
+ */
+fun <S : State> stateAccessorOf(value: S?): StateAccessor<S> = SimpleStateAccessor(value)
+
+/**
  * Returns a state accessor that provides a default value when state is `null`
  *
  * @see DefaultStateAccessor
  */
-fun <S : State> StateAccessor<S>.withDefault(defaultValue: () -> S) =
+fun <S : State> StateAccessor<S>.withDefault(defaultValue: () -> S): DefaultStateAccessor<S> =
     DefaultStateAccessor(this, defaultValue)
