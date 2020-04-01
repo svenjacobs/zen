@@ -10,7 +10,7 @@ buildscript {
     dependencies {
         classpath("de.mannodermaus.gradle.plugins:android-junit5:1.6.0.0")
         classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.70")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.71")
     }
 }
 
@@ -29,7 +29,7 @@ subprojects {
     }
 
     group = "com.svenjacobs.zen"
-    version = "0.12"
+    version = "0.13"
 
     tasks.withType<KotlinJvmCompile> {
         kotlinOptions {
@@ -46,7 +46,7 @@ subprojects {
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 
     fun isNonStable(version: String) =
-        listOf("alpha", "beta", "rc", "eap").any { version.toLowerCase().contains(it) }
+        listOf("alpha", "beta", "rc", "eap", "-m").any { version.toLowerCase().contains(it) }
 
     rejectVersionIf {
         isNonStable(candidate.version) && !isNonStable(currentVersion)

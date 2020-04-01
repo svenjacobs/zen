@@ -31,13 +31,18 @@ android {
         exclude("META-INF/kotlinx-coroutines-core.kotlin_module")
         exclude("META-INF/kotlinx-serialization-runtime.kotlin_module")
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation(project(":zen-android"))
     implementation(project(":zen-di-support-katana"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5")
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.fragment:fragment-ktx:1.2.3")
     implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta4")
