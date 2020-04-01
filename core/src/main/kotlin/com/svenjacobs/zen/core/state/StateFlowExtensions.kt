@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.*
  * @see nullableSideEffect
  * @see SelectionWithState
  */
-fun <S : State, T : Any> Flow<S>.sideEffect(
+fun <S : Any, T : Any> Flow<S>.sideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T, S>.() -> Unit
 ) =
@@ -46,7 +46,7 @@ fun <S : State, T : Any> Flow<S>.sideEffect(
  * @see sideEffect
  * @see nullableSideEffect
  */
-fun <S : State, T : Any> Flow<S>.distinctSideEffect(
+fun <S : Any, T : Any> Flow<S>.distinctSideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T, S>.() -> Unit
 ) =
@@ -62,7 +62,7 @@ fun <S : State, T : Any> Flow<S>.distinctSideEffect(
  * @see distinctSideEffect
  * @see SelectionWithState
  */
-fun <S : State, T> Flow<S>.nullableSideEffect(
+fun <S : Any, T> Flow<S>.nullableSideEffect(
     select: S.() -> T?,
     onEach: suspend SelectionWithState<T?, S>.() -> Unit
 ) =
@@ -81,7 +81,7 @@ fun <S : State, T> Flow<S>.nullableSideEffect(
  * @see sideEffect
  * @see nullableSideEffect
  */
-data class SelectionWithState<T, S : State>(
+data class SelectionWithState<T, S : Any>(
     val value: T
 ) {
     private lateinit var _state: S
@@ -89,14 +89,14 @@ data class SelectionWithState<T, S : State>(
 
     internal companion object {
 
-        internal fun <T, S : State> of(value: T?, state: S) =
+        internal fun <T, S : Any> of(value: T?, state: S) =
             value?.let {
                 SelectionWithState<T, S>(value).apply {
                     _state = state
                 }
             }
 
-        internal fun <T, S : State> ofNullable(value: T?, state: S) =
+        internal fun <T, S : Any> ofNullable(value: T?, state: S) =
             SelectionWithState<T?, S>(value).apply {
                 _state = state
             }
