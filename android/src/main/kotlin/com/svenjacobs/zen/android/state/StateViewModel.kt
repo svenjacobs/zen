@@ -5,5 +5,5 @@ import com.svenjacobs.zen.core.state.State
 
 abstract class StateViewModel<S : State> : ViewModel() {
 
-    abstract val state: S?
+    abstract var state: S?
 }
