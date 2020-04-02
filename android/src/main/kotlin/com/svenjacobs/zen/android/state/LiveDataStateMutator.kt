@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.svenjacobs.zen.core.state.State
 import com.svenjacobs.zen.core.state.StateMutator
 
-class MutableLiveDataStateMutator<S : State>(
+class LiveDataStateMutator<S : State>(
     private val state: MutableLiveData<S>
 ) : StateMutator<S> {
 
