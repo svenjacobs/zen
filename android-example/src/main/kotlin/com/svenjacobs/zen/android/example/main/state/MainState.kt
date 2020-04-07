@@ -8,6 +8,5 @@ data class MainState(
     val isError: Boolean = false,
     val posts: List<JsonPost> = emptyList(),
     val dialogTitle: String? = null,
-    val toastMessage: String? = null,
-    val test: String = "Hello world"
+    val toastMessage: String? = null
 ) : State

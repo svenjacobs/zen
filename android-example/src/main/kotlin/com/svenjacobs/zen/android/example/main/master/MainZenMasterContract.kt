@@ -57,10 +57,6 @@ class MainZenMasterContract : ZenMaster.Contract<MainView, MainAction, MainState
             state.sideEffect(
                 select = { toastMessage },
                 onEach = { view.showToast(value) }
-            ),
-            state.sideEffect(
-                select = { test },
-                onEach = { view.setTest(value) }
             )
         )
 
