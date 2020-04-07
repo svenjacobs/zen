@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 fun <T> Flow<T>.delayedDefault(
     defaultAfter: Long,
-    defaultValue: () -> T
+    defaultValue: suspend () -> T
 ): Flow<T> =
     channelFlow {
         val job = launch {
