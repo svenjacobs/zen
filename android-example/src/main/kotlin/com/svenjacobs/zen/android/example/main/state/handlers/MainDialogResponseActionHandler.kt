@@ -14,7 +14,11 @@ class MainDialogResponseActionHandler :
         state: DefaultStateAccessor<MainState>
     ) =
         flow {
-            emit(state.value.copy(toastMessage = if (action.success) "YES was clicked" else "NO was clicked"))
-            emit(state.value.copy(toastMessage = null))
+            emit(
+                state
+                    .get()
+                    .copy(toastMessage = if (action.success) "YES was clicked" else "NO was clicked")
+            )
+            emit(state.get().copy(toastMessage = null))
         }
 }

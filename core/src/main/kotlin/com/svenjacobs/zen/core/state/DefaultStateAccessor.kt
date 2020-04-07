@@ -1,7 +1,5 @@
 package com.svenjacobs.zen.core.state
 
-import kotlin.reflect.KProperty
-
 /**
  * Accessor that provides a default value if original value is `null`.
  *
@@ -12,9 +10,6 @@ class DefaultStateAccessor<S : State>(
     private val defaultValue: () -> S
 ) : StateAccessor<S> {
 
-    override val value: S
-        get() = accessor.value ?: defaultValue()
-
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): S =
-        value
+    override suspend fun get(): S =
+        accessor.get() ?: defaultValue()
 }

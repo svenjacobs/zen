@@ -71,12 +71,14 @@ fun <S : Any, T> Flow<S>.nullableSideEffect(
         .onEach { it.onEach() }
 
 /**
- * Holds selected value of [sideEffect] or [nullableSideEffect] and provides current [State] as
- * an additional property.
+ * Holds selected [value] of [sideEffect], [nullableSideEffect] or [distinctSideEffect] and provides
+ * current [State] as property [state].
  *
  * [_state] is not part of primary constructor so that the value is omitted from automatically
  * generated [equals] and [hashCode] functions in order for [Flow.distinctUntilChanged] to still
  * work properly.
+ *
+ * @param value Selected value
  *
  * @see sideEffect
  * @see nullableSideEffect

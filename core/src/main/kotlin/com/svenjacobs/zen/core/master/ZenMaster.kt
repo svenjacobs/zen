@@ -103,7 +103,7 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
 
         val state = transformer.transform(actions)
             .map(middleware::onState)
-            .onEach { state.value = it }
+            .onEach { state.set(it) }
             .flowOn(uiContext)
             // broadcastIn() & asFlow() is used here to create a "shared" state flow
             // that is unbundled from further downstream transformations so that collection is

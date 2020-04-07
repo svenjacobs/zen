@@ -1,8 +1,7 @@
 package com.svenjacobs.zen.android.example.main.state
 
-import androidx.lifecycle.MutableLiveData
-import com.svenjacobs.zen.android.state.LiveDataStateViewModel
+import com.svenjacobs.zen.android.state.StateViewModel
 
 class MainViewModel(
-    override val state: MutableLiveData<MainState> = MutableLiveData()
-) : LiveDataStateViewModel<MainState>()
+    @Volatile override var state: MainState? = null
+) : StateViewModel<MainState>()

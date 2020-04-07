@@ -1,7 +1,5 @@
 package com.svenjacobs.zen.core.state
 
-import kotlin.reflect.KProperty
-
 /**
  * Read-only wrapper around a [State].
  *
@@ -10,9 +8,20 @@ import kotlin.reflect.KProperty
  */
 interface StateAccessor<S : State> {
 
-    val value: S?
-
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): S? = value
+    /**
+     * Returns current state value.
+     *
+     * Accessor method is suspending so that read operation can be synchronized via an
+     * [kotlin.coroutines.CoroutineContext]. Implementations might for instance access the value as
+     * follows:
+     *
+     * ```
+     * return withContext(Dispatchers.Main.immediate) {
+     *   stateHolder.value
+     * }
+     * ```
+     */
+    suspend fun get(): S?
 }
 
 /**

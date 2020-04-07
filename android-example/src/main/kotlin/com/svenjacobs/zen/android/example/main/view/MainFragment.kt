@@ -110,4 +110,8 @@ class MainFragment : ZenFragment(),
     override fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun setTest(text: String) {
+        binding.test.text = text
+    }
 }

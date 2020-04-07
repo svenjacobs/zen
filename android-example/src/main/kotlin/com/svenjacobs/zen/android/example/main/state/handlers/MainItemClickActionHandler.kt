@@ -13,7 +13,7 @@ class MainItemClickActionHandler : TransformationActionHandler<ItemClickAction, 
         state: DefaultStateAccessor<MainState>
     ) =
         flow {
-            emit(state.value.copy(dialogTitle = action.item.title))
-            emit(state.value.copy(dialogTitle = null))
+            emit(state.get().copy(dialogTitle = action.item.title))
+            emit(state.get().copy(dialogTitle = null))
         }
 }

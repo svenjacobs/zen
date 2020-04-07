@@ -21,7 +21,7 @@ internal interface BasePostsActionHandler<A : MainAction> :
         flow
             .flowOn(ioCoroutineContext)
             .map {
-                state.value.copy(
+                state.get().copy(
                     isLoading = false,
                     posts = it
                 )
@@ -30,14 +30,14 @@ internal interface BasePostsActionHandler<A : MainAction> :
                 Log.e(TAG, "Error while loading posts", e)
 
                 emit(
-                    state.value.copy(
+                    state.get().copy(
                         isLoading = false,
                         isError = true
                     )
                 )
             }
             .onStart {
-                emit(state.value.copy(isLoading = true))
+                emit(state.get().copy(isLoading = true))
             }
 
     private companion object {

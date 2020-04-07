@@ -26,4 +26,6 @@ interface MainView : ZenView {
     fun showDialog(title: String)
 
     fun showToast(message: String)
+
+    fun setTest(text: String)
 }
