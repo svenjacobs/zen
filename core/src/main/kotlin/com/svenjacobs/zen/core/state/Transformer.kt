@@ -34,6 +34,10 @@ class Transformer<in A : Action, out S : State>(
          *
          * Flow might emit multiple values, like a loading state followed by a content or error state.
          *
+         * Refrain from returning Flows per Action that constantly produce values and do not terminate
+         * in a short time frame as multiple invocations of the same Action would result in parallel
+         * Flow computations.
+         *
          * @param action [Action] that was dispatched
          * @param state Provides access to current value of [State]. State might be `null` initially.
          */
