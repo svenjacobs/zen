@@ -5,17 +5,27 @@ import com.svenjacobs.zen.core.action.Action
 
 sealed class MainAction : Action {
 
-    object LoadAction : MainAction()
+    enum class Id { Load, LoadUserPosts, ItemClick, DialogResponse }
+
+    object LoadAction : MainAction() {
+        override val id = Id.Load
+    }
 
     data class LoadUserPostsAction(
         val userId: Int
-    ) : MainAction()
+    ) : MainAction() {
+        override val id = Id.LoadUserPosts
+    }
 
     data class ItemClickAction(
         val item: JsonPost
-    ) : MainAction()
+    ) : MainAction() {
+        override val id = Id.ItemClick
+    }
 
     data class DialogResponseAction(
         val success: Boolean
-    ) : MainAction()
+    ) : MainAction() {
+        override val id = Id.DialogResponse
+    }
 }

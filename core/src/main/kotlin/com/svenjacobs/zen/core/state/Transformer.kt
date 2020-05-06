@@ -1,10 +1,10 @@
 package com.svenjacobs.zen.core.state
 
+import com.svenjacobs.zen.common.coroutines.flow.flatMapDistinct
 import com.svenjacobs.zen.core.action.Action
 import com.svenjacobs.zen.core.state.Transformer.Transformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
 import kotlin.coroutines.CoroutineContext
 
@@ -34,9 +34,9 @@ class Transformer<in A : Action, out S : State>(
          *
          * Flow might emit multiple values, like a loading state followed by a content or error state.
          *
-         * Refrain from returning Flows per Action that constantly produce values and do not terminate
-         * in a short time frame as multiple invocations of the same Action would result in parallel
-         * Flow computations.
+         * Note that Flows produced by Actions are distinct and that a previous Flow of an incoming
+         * Action is cancelled. So there is only one active Flow per Action. For more details see
+         * [flatMapDistinct].
          *
          * @param action [Action] that was dispatched
          * @param state Provides access to current value of [State]. State might be `null` initially.
@@ -45,6 +45,10 @@ class Transformer<in A : Action, out S : State>(
     }
 
     fun transform(actions: Flow<A>): Flow<S> =
-        actions.flatMapMerge { transformation(it, state) }
+        actions
+            .flatMapDistinct(
+                context = transformationContext,
+                distinctBy = { it.id }
+            ) { transformation(it, state) }
             .flowOn(transformationContext)
 }

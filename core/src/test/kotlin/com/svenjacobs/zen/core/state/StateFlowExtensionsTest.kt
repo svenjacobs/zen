@@ -58,6 +58,30 @@ object StateFlowExtensionsTest : Spek(
                             )
                         ).collect()
 
+                        textInvocations `should be equal to` 4
+                        numberInvocations `should be equal to` 2
+                    }
+                }
+            }
+
+            context("distinctSideEffect") {
+
+                it("should select distinct non-null values") {
+                    runBlockingTest {
+                        var textInvocations = 0
+                        var numberInvocations = 0
+
+                        merge(
+                            flow.distinctSideEffect(
+                                select = { text },
+                                onEach = { textInvocations++ }
+                            ),
+                            flow.distinctSideEffect(
+                                select = { number },
+                                onEach = { numberInvocations++ }
+                            )
+                        ).collect()
+
                         textInvocations `should be equal to` 3
                         numberInvocations `should be equal to` 2
                     }

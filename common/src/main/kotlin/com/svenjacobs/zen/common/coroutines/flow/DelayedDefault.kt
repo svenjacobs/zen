@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+/**
+ * Emits a default value if original Flow has not emitted any value after [defaultAfter] milliseconds.
+ */
 fun <T> Flow<T>.delayedDefault(
     defaultAfter: Long,
     defaultValue: suspend () -> T
