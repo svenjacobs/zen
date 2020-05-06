@@ -8,9 +8,9 @@ buildscript {
     }
 
     dependencies {
-        classpath("de.mannodermaus.gradle.plugins:android-junit5:1.6.0.0")
+        classpath("de.mannodermaus.gradle.plugins:android-junit5:1.6.2.0")
         classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.71")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.72")
     }
 }
 
