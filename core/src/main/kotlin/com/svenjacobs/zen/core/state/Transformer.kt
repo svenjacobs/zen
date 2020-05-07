@@ -47,8 +47,8 @@ class Transformer<in A : Action, out S : State>(
     fun transform(actions: Flow<A>): Flow<S> =
         actions
             .flatMapDistinct(
-                context = transformationContext,
-                distinctBy = { it.id }
-            ) { transformation(it, state) }
+                distinctBy = { it.id },
+                transform = { transformation(it, state) }
+            )
             .flowOn(transformationContext)
 }
