@@ -20,4 +20,8 @@ class ActionPublisher<A : Action> {
     fun publish(action: A) {
         publish(flowOf(action))
     }
+
+    fun publish(vararg actions: A) {
+        publish(flowOf(*actions))
+    }
 }
