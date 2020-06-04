@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    testImplementation(Dependencies.kluent)
-    testImplementation(Dependencies.kotlinxCoroutinesTest)
-    testImplementation(Dependencies.spekDslJvm)
-    testRuntimeOnly(Dependencies.spekRunnerJunit5)
+    "testImplementation"(Dependencies.kluent)
+    "testImplementation"(Dependencies.kotlinxCoroutinesTest)
+    "testImplementation"(Dependencies.spekDslJvm)
+    "testRuntimeOnly"(Dependencies.spekRunnerJunit5)
 }
 
 tasks.withType<Test> {

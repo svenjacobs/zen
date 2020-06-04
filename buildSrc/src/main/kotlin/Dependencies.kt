@@ -1,8 +1,8 @@
 object Versions {
     const val androidXLifecycle = "2.2.0"
-    const val katana = "1.13.1"
-    const val kotlinxCoroutines = "1.3.5"
-    const val spek = "2.0.10"
+    const val katana = "1.13.2"
+    const val kotlinxCoroutines = "1.3.7"
+    const val spek = "2.0.11"
 }
 
 object Dependencies {
