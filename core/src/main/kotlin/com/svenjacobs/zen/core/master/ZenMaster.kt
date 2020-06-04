@@ -69,6 +69,7 @@ interface ZenMaster {
 
 /**
  * @param uiContext A [CoroutineContext] where UI operations should be performed in
+ * @param exceptionHandler Exception handler that handles all uncaught exceptions of Flow. Default implementation just rethrows exception.
  *
  * @see ZenMaster
  */
@@ -78,7 +79,8 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
     private val transformer: Transformer<A, S>,
     private val state: StateMutator<S>,
     private val uiContext: CoroutineContext = Dispatchers.Main.immediate,
-    private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware()
+    private val middleware: ZenMaster.Middleware<A, S> = NopMiddleware(),
+    private val exceptionHandler: suspend FlowCollector<S>.(Throwable) -> Unit = { e -> throw e }
 ) : ZenMaster {
 
     /**
@@ -113,6 +115,8 @@ class ZenMasterImpl<in V : ZenView, A : Action, S : State>(
             .broadcastIn(viewCoroutineScope)
             .asFlow()
 
-        contract.stateChanges(state, view).launchIn(viewCoroutineScope)
+        contract.stateChanges(state, view)
+            .catch(exceptionHandler)
+            .launchIn(viewCoroutineScope)
     }
 }

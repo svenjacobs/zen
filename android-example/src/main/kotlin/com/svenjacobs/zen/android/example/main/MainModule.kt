@@ -2,6 +2,7 @@
 
 package com.svenjacobs.zen.android.example.main
 
+import android.util.Log
 import com.svenjacobs.zen.android.example.inject.Names.COROUTINE_CONTEXT_IO
 import com.svenjacobs.zen.android.example.inject.ZenFragmentViewModelStateModule
 import com.svenjacobs.zen.android.example.main.master.MainZenMasterContract
@@ -37,7 +38,8 @@ fun MainModule(
                 )
             },
             contract = { MainZenMasterContract() },
-            middleware = { AndroidLoggingMiddleware() }
+            middleware = { AndroidLoggingMiddleware() },
+            exceptionHandler = { { e -> Log.e("MainModule", "Unhandled exception", e) } }
         )
     )
 ) {

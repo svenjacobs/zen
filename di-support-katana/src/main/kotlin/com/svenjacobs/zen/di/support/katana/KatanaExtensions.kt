@@ -9,6 +9,7 @@ import com.svenjacobs.zen.core.state.Transformer
 import com.svenjacobs.zen.core.view.ZenView
 import com.svenjacobs.zen.di.support.katana.Names.ZEN_COROUTINE_CONTEXT_TRANSFORMATION
 import com.svenjacobs.zen.di.support.katana.Names.ZEN_COROUTINE_CONTEXT_UI
+import kotlinx.coroutines.flow.FlowCollector
 import org.rewedigital.katana.ModuleBindingContext
 import org.rewedigital.katana.dsl.ProviderDsl
 import org.rewedigital.katana.dsl.factory
@@ -58,7 +59,8 @@ fun <V : ZenView, A : Action, S : State> ModuleBindingContext.contract(
  */
 inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zenMaster(
     crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
-    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
+    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() },
+    crossinline exceptionHandler: ProviderDsl.() -> suspend FlowCollector<S>.(Throwable) -> Unit = { { e -> throw e } }
 ) =
     factory<ZenMaster> {
         ZenMasterImpl<V, A, S>(
@@ -67,7 +69,8 @@ inline fun <reified V : ZenView, A : Action, S : State> ModuleBindingContext.zen
             get(),
             get(),
             uiCoroutineContext(),
-            middleware()
+            middleware(),
+            exceptionHandler()
         )
     }
 

@@ -11,6 +11,7 @@ import com.svenjacobs.zen.core.state.StateMutator
 import com.svenjacobs.zen.core.state.Transformer
 import com.svenjacobs.zen.core.view.ZenView
 import com.svenjacobs.zen.di.support.katana.Names.*
+import kotlinx.coroutines.flow.FlowCollector
 import org.rewedigital.katana.Module
 import org.rewedigital.katana.dsl.ProviderDsl
 import org.rewedigital.katana.dsl.alias
@@ -31,7 +32,8 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
     noinline stateMutator: ProviderDsl.() -> StateMutator<S> = { get(name = ZEN_STATE_MUTATOR) },
     noinline transformationCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_TRANSFORMATION) },
     crossinline uiCoroutineContext: ProviderDsl.() -> CoroutineContext = { get(name = ZEN_COROUTINE_CONTEXT_UI) },
-    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() }
+    crossinline middleware: ProviderDsl.() -> ZenMaster.Middleware<A, S> = { NopMiddleware() },
+    crossinline exceptionHandler: ProviderDsl.() -> suspend FlowCollector<S>.(Throwable) -> Unit = { { e -> throw e } }
 ) = Module {
 
     factory(body = view)
@@ -42,7 +44,7 @@ inline fun <reified V : ZenView, A : Action, S : State> ZenModule(
 
     contract(contract)
 
-    zenMaster<V, A, S>(uiCoroutineContext, middleware)
+    zenMaster<V, A, S>(uiCoroutineContext, middleware, exceptionHandler)
 
     factory(body = stateMutator)
 
