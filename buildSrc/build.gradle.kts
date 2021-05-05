@@ -8,10 +8,10 @@ kotlinDslPluginOptions {
 
 repositories {
     google()
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    implementation(kotlin("gradle-plugin", version = "1.3.72"))
-    implementation("com.android.tools.build:gradle:4.0.0")
+    implementation(kotlin("gradle-plugin", version = "1.5.0"))
+    implementation("com.android.tools.build:gradle:4.2.0")
 }

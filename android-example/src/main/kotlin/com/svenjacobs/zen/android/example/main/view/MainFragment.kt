@@ -65,7 +65,7 @@ class MainFragment : ZenFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -102,8 +102,12 @@ class MainFragment : ZenFragment(),
     override fun showDialog(title: String) {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
-            .setPositiveButton(android.R.string.yes) { _, _ -> broadcaster.broadcast(DialogResponse.YES) }
-            .setNegativeButton(android.R.string.no) { _, _ -> broadcaster.broadcast(DialogResponse.NO) }
+            .setPositiveButton(android.R.string.ok) { _, _ -> broadcaster.broadcast(DialogResponse.YES) }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                broadcaster.broadcast(
+                    DialogResponse.NO
+                )
+            }
             .show()
     }
 
